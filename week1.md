@@ -106,7 +106,7 @@ $y = 2x + 3$ 의 데이터가 주어졌을 때, 이를 $y = wx + b$로 가정하
 
     for t in range(1000):
         y_hat = x @ beta #y 추정값
-        error = y-y_hat
+        error = y - y_hat
         grad = -np.transpose(x) @ error #norm2 제곱의 gradient
         beta -= lr_rate * grad
         errors.append(np.linalg.norm(error))
@@ -123,3 +123,19 @@ $y = 2x + 3$ 의 데이터가 주어졌을 때, 이를 $y = wx + b$로 가정하
     plt.ylabel('error')
 
     plt.show()
+
+## 3) 확률적 경사하강법(stochastic gradient descent)
+- 전체 데이터에서 일부만을 사용하는 경사하강법
+- 데이터의 일부만을 사용하기 때문에 좀 더 효율적이다. (연산량이 mini-batch size / total size 만큼 감소) 
+- 위와 같은 문제에서 확률적 경사하강법을 이용한 알고리즘은 다음과 같다.
+
+
+
+# 3. 딥러닝의 학습 방법
+## 1) 신경망 수식
+
+## 2) 활성함수
+
+## 3) 다층 인공 신경망(Multi-Layer Perceptron, MLP)
+
+## 4) 역전파(
