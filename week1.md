@@ -87,3 +87,39 @@ $$= -\cfrac{2}{n}\mathbf{X_k^T} \left( \mathbf{y} - \mathbf{X}\boldsymbol{\beta}
 
 $$ \therefore \nabla_\beta\left( \lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 \right)^2 = -\cfrac{2}{n}\mathbf{X^T}\left( \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \right)$$
 
+## 2) 경사하강법 기반 선형회귀 알고리즘
+$y = 2x + 3$ 의 데이터가 주어졌을 때, 이를 $y = wx + b$로 가정하고 계수 w와 b를 찾기 위한 경사하강법 기반 선형회귀 알고리즘은 다음과 같다.
+
+    import numpy as np
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import matplotlib.figure as fig
+
+    np.random.seed(0)
+    x = np.random.randn(100,1)
+    y = 2*x + 3 #실제 y값
+    x = np.concatenate((x, np.ones_like(x)), axis=1)
+    w, b = 0.0, 0.0 #계수 w와 b 초기값
+    beta = np.array([w,b]).reshape(2,1) #계수 행렬 beta
+    lr_rate = 1e-4
+    errors = []
+
+    for t in range(1000):
+        y_hat = x @ beta #y 추정값
+        error = y-y_hat
+        grad = -np.transpose(x) @ error #norm2 제곱의 gradient
+        beta -= lr_rate * grad
+        errors.append(np.linalg.norm(error))
+    
+    print('w: {}\nb: {}\nerror: {}'.format(beta[0,0], beta[1,0], errors[-1]))
+    #w: 1.999990211045769 
+    #b: 2.999897969934777
+    #error: 0.0010414604912078373
+
+    # 그래프를 그리기 위한 코드
+    plt.figure(figsize=(10,10))
+    ax = plt.plot(errors)
+    plt.xlabel('trial')
+    plt.ylabel('error')
+
+    plt.show()
