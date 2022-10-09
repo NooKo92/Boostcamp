@@ -65,12 +65,25 @@ $z = x^2 + 2x + y^2 + 3y$ 의 경사하강법 알고리즘은 다음과 같다.
     
 # 2. 선형회귀(Linear Regression)
 - 독립변수 x와 종속변수 y의 선형상관관계를 추정하는 방법
-- $\hat{\mathbf{y}} = \mathbf{X}\boldsymbol{\beta} \approx \mathbf{y}$ (y의 추정치는 값에 근사한다.)
+- $\hat{\mathbf{y}} = \mathbf{X}\boldsymbol{\beta} \approx \mathbf{y}$ (y의 추정치는 y값에 근사한다.)
 ## 1) 경사하강법으로 선형회귀 계수 $\boldsymbol{\beta}$ 구하기
 - $\mathbf{y} - \hat{\mathbf{y}} = \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rightarrow 0$ 이 되도록 하는 $\boldsymbol{\beta}$를 구하는 것이 목적이다.
 - 이를 위해서는 $\mathbf{y} - \mathbf{X}\boldsymbol{\beta}$ 의 gradient를 구해야 한다.
 $$\nabla_\beta\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 = \left( \partial_{\beta_1}\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2, \cdots,  \partial_{\beta_d}\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 \right)$$
 $$\Rightarrow \partial_{\beta_k}\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 = \partial_{\beta_k} \left\\{ \frac{1}{n}\sum_{i=1}^n \left( y_i - \sum_{j=1}^d X_{i,j}\beta_j \right)^2 \right\\}^{1/2}$$
 $$= \left( \partial_{\beta_k} \left\\{ \cfrac{1}{n}\sum_{i=1}^n\left( y_i - \sum_{j=1}^d X_{i,j}\beta_j \right)^2 \right\\}\right) / \left( {2\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2}\right) $$
+$$= \left( \partial_{\beta_k} \left[ \cfrac{1}{n}\sum_{i=1}^n\left\\{ y_i^2 - 2y_i\sum_{j=1}^d X_{i,j}\beta_j + \left( \sum_{j=1}^d X_{i,j}\beta_j \right)^2 \right\\} \right]\right) / \left( {2\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2}\right) $$
+$$= \left\\{ \cfrac{1}{n}\sum_{i=1}^n\left( - 2y_i X_{i,k} + 2X_{i,k}\sum_{j=1}^d X_{i,j}\beta_j \right) \right\\} / \left( {2\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2}\right) $$
+$$= \left\\{ -\cfrac{2}{n}\sum_{i=1}^n X_{i,k} \left( y_i - \sum_{j=1}^d X_{i,j}\beta_j \right) \right\\} / \left( {2\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2}\right) $$
+$$= -\cfrac{ \mathbf{X_k^T}\left( \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \right)}{n\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2} $$
 
- 
+$$ \therefore \nabla_\beta\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 = -\cfrac{\mathbf{X^T} \left( \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \right)}{n\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2} $$
+
+- $\lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2$ 대신 $\left( \lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 \right)^2$을 사용하면 식이 더 간단해진다.
+
+$$ \partial_{\beta_k} \left( \lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 \right)^2 = \partial_{\beta_k} \left\\{ \frac{1}{n}\sum_{i=1}^n \left( y_i - \sum_{j=1}^d X_{i,j}\beta_j \right)^2 \right\\} $$
+
+$$= -\cfrac{2}{n}\mathbf{X_k^T} \left( \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \right) $$
+
+$$ \therefore \nabla_\beta\left( \lVert \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \rVert_2 \right)^2 = -\cfrac{2}{n}\mathbf{X^T}\left( \mathbf{y} - \mathbf{X}\boldsymbol{\beta} \right)$$
+
