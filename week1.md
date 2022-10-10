@@ -96,28 +96,28 @@ $y = 2x + 3$ 의 데이터가 주어졌을 때, 이를 $y = wx + b$로 가정하
     import matplotlib.figure as fig
 
     np.random.seed(0)
-    x = np.random.randn(100,1)
+    x = np.random.randn(10000,1)*2
     y = 2*x + 3 #실제 y값
     x = np.concatenate((x, np.ones_like(x)), axis=1)
     w, b = 0.0, 0.0 #계수 w와 b 초기값
     beta = np.array([w,b]).reshape(2,1) #계수 행렬 beta
-    lr_rate = 1e-4
+    lr_rate = 1e-5
     errors = []
 
-    for t in range(1000):
+    for t in range(100):
         y_hat = x @ beta #y 추정값
         error = y - y_hat
         grad = -np.transpose(x) @ error #norm2 제곱의 gradient
         beta -= lr_rate * grad
         errors.append(np.linalg.norm(error))
-    
+
     print('w: {}\nb: {}\nerror: {}'.format(beta[0,0], beta[1,0], errors[-1]))
-    #w: 1.999990211045769 
-    #b: 2.999897969934777
-    #error: 0.0010414604912078373
+    #w: 1.9999989742674702 
+    #b: 2.9999192350146244
+    #error: 0.008972042876632457
 
     # 그래프를 그리기 위한 코드
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(20,5))
     ax = plt.plot(errors)
     plt.xlabel('trial')
     plt.ylabel('error')
@@ -128,8 +128,48 @@ $y = 2x + 3$ 의 데이터가 주어졌을 때, 이를 $y = wx + b$로 가정하
 - 전체 데이터에서 일부만을 사용하는 경사하강법
 - 데이터의 일부만을 사용하기 때문에 좀 더 효율적이다. (연산량이 mini-batch size / total size 만큼 감소) 
 - 위와 같은 문제에서 확률적 경사하강법을 이용한 알고리즘은 다음과 같다.
+    
+        import numpy as np
+        import matplotlib
+        import matplotlib.pyplot as plt
+        import matplotlib.figure as fig
+    
+        np.random.seed(0)
+        x = np.random.randn(10000,1)*2
+        y = 2*x + 3 #실제 y값
+        x = np.concatenate((x, np.ones_like(x)), axis=1)
+        w, b = 0.0, 0.0 #계수 w와 b 초기값
+        beta = np.array([w,b]).reshape(2,1) #계수 행렬 beta
+        lr_rate = 0.005
+        errors = []
 
+        for t in range(100):
+            idx = np.random.choice(1000,10) # 크기 10짜리 mini-batch
+            m_x = x[idx]
+            m_y = y[idx]
+        
+            y_hat = m_x @ beta #y 추정값
+            error = m_y - y_hat
+            grad = -np.transpose(m_x) @ error #norm2 제곱의 gradient
+            beta -= lr_rate * grad
+            errors.append(np.linalg.norm(error))
 
+        print('w: {}\nb: {}\nerror: {}'.format(beta[0,0], beta[1,0], errors[-1]))
+        #w: 2.000747075329951 
+        #b: 2.9830003462765644
+        #error: 0.056048243120771266
+
+        # 그래프를 그리기 위한 코드
+        plt.figure(figsize=(20,5))
+        ax = plt.plot(errors)
+        plt.xlabel('trial')
+        plt.ylabel('error')
+
+        plt.show()
+        
+- 위 두 알고리즘의 그래프 비교
+![1](https://user-images.githubusercontent.com/113276742/194876091-fb3b270a-f1cd-44e8-9889-e0ad7e1d5674.png)
+![2](https://user-images.githubusercontent.com/113276742/194876122-64235aaf-3d7b-4277-b088-49ff9495330c.png)
 
 # 3. 딥러닝의 학습 방법
 ## 1) 신경망 수식
