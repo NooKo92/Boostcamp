@@ -173,6 +173,20 @@ $y = 2x + 3$ 의 데이터가 주어졌을 때, 이를 $y = wx + b$로 가정하
 
 # 3. 딥러닝의 학습 방법
 ## 1) 신경망 수식
+$$ \begin{bmatrix} -\mathbf{O_1}- \\
+-\mathbf{O_2}- \\
+\vdots \\
+-\mathbf{O_n}- \end{bmatrix} = \begin{bmatrix} -\mathbf{X_1}- \\
+-\mathbf{X_2}- \\
+\vdots \\
+-\mathbf{X_n}- \end{bmatrix} \begin{bmatrix} \mathbf{w_{11}} \mathbf{w_{12}} \cdots \mathbf{w_{1p}} \\
+\mathbf{w_{21}} \mathbf{w_{22}} \cdots \mathbf{w_{2p}} \\
+\vdots \\
+\mathbf{w_{d1}} \mathbf{w_{d2}} \cdots \mathbf{w_{dp}} \end{bmatrix}+ \begin{bmatrix} \vdots \\
+\mathbf{b_1} \quad \mathbf{b_2} \cdots \mathbf{b_p} \\
+\vdots \end{bmatrix}$$
+
+$$ \left(n \times p \right) \qquad \left(n \times d \right) \qquad \quad \left(d \times p \right) \qquad \qquad \qquad \left(n \times p \right) \quad $$
 
 ## 2) 활성함수
 
