@@ -187,9 +187,33 @@ $$ \begin{bmatrix} -\mathbf{O_1}- \\
 \vdots \end{bmatrix}$$
 
 $$ \left(n \times p \right) \qquad \left(n \times d \right) \qquad \quad \left(d \times p \right) \qquad \qquad \qquad \left(n \times p \right) \quad $$
+- 각 행벡터 $\mathbf{O_i}$는 데이터 $\mathbf{X_i}$와 가중치 행렬 $\mathbf{w}$사이의 행렬곱과 절편 $\mathbf{b}$벡터의 합으로 표현된다고 가정한다.
 
-## 2) 활성함수
+## 2) 활성함수(Activation Function)
+- 활성함수 $\sigma$는 비선형 함수로 잠재벡터 $z = (z,\ \cdots,\ z_q)$의 각 노드에 개별적으로 적용되어 새로운 잠재벡터 $H = \left( \sigma(z_1),\ \cdots,\ \sigma(z_q) \right)$를 만든다.
+
+### (1) Sigmoid 함수
+<p align="center"><img src="https://user-images.githubusercontent.com/113276742/196037460-7b091159-f934-4cc9-8603-5d9d6ba939f9.png"></p>
+
+$$\sigma(x) = \cfrac{1}{1+e^{-x}}$$
+
+### (2) Hyperbolic Tangent 함수
+<p align="center"><img src="https://user-images.githubusercontent.com/113276742/196037039-da1a4c33-0652-4977-8f67-9bc8d9f37454.png"></p>
+$$\tanh(x) = \cfrac{e^x-e^{-x}}{e^x+e^{-x}}$$
+
+### (3) Rectified Linear Unit 함수
+<p align="center"><img src="https://user-images.githubusercontent.com/113276742/196037043-be6e8b2c-e4bc-4eb8-b7ff-3084f26c2100.png"></p>
+$$ReLU(x) = max(0,x)$$
 
 ## 3) 다층 인공 신경망(Multi-Layer Perceptron, MLP)
+- 신경망을 여러층 쌓으면 MLP라고 한다.
+- hidden layer를 사용함으로써 비선형성을, 목적함수를 근사하는데 필요한 노드의 숫자를 줄임으로써 효율성을 얻을 수 있기 때문에 MLP를 사용한다.
+$$\mathbf{O} = \mathbf{Z}^{(L)}$$
+$$\uparrow$$
+$$\mathbf{H}^{(l)} = \sigma\left(\mathbf{Z}^{(l)}\right)$$
+$$\mathbf{Z}^{(l)} = \mathbf{H}^{(l-1)}\mathbf{W}^{(l)} + \mathbf{b}^{(l)}$$
+$$\uparrow$$
+$$\mathbf{H}^{(1)} = \sigma\left(\mathbf{Z}^{(1)}\right)$$
+$$\mathbf{Z}^{(1)} = \mathbf{X}\mathbf{W}^{(1)} + \mathbf{b}^{(1)}$$
 
-## 4) 역전파(
+## 4) 역전파(Backpropagation)
