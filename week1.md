@@ -186,7 +186,7 @@ $$ \begin{bmatrix} -\mathbf{O_1}- \\
 \mathbf{b_1} \quad \mathbf{b_2} \cdots \mathbf{b_p} \\
 \vdots \end{bmatrix}$$
 
-$$ \left(n \times p \right) \qquad \left(n \times d \right) \qquad \quad \left(d \times p \right) \qquad \qquad \qquad \left(n \times p \right) \quad $$
+$$\ \left(n \times p \right) \qquad\ \ \left(n \times d \right) \qquad \quad \left(d \times p \right) \qquad \qquad \qquad \left(n \times p \right) \qquad $$
 - 각 행벡터 $\mathbf{O_i}$는 데이터 $\mathbf{X_i}$와 가중치 행렬 $\mathbf{w}$사이의 행렬곱과 절편 $\mathbf{b}$벡터의 합으로 표현된다고 가정한다.
 
 ## 2) 활성함수(Activation Function)
@@ -217,3 +217,5 @@ $$\mathbf{H}^{(1)} = \sigma\left(\mathbf{Z}^{(1)}\right)$$
 $$\mathbf{Z}^{(1)} = \mathbf{X}\mathbf{W}^{(1)} + \mathbf{b}^{(1)}$$
 
 ## 4) 역전파(Backpropagation)
+- 손실함수 $\mathcal{L}$을 최소화하는 $\mathbf{w}^{(l)}$을 찾기위해 $\partial\mathcal{L}/\partial\mathbf{w}^{(l)}$을 계산하는 방법
+$$\cfrac{\partial\mathcal{L}}{\partial\mathbf{w}^{(l)}} = \cfrac{\partial\mathcal{L}}{\partial\mathbf{O}} \times\ \cdots\ \times \cfrac{\partial\mathbf{Z}^{(l+1)}}{\partial\mathbf{H}^{(l)}} \times \cfrac{\partial\mathbf{H}^{(l)}}{\partial\mathbf{Z}^{(l)}} \times \cfrac{\partial\mathbf{Z}^{(l)}}{\partial\mathbf{w}^{(l)}}$$
