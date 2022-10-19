@@ -9,49 +9,49 @@
 ## 1) torch.nn.Sequential
 - 여러개의 module들을 순차적으로 실행시키는 class
 
-    import torch
-    from torch import nn
+        import torch
+        from torch import nn
 
-    class Add(nn.Module):
-        def __init__(self, value):
-            super().__init__()
-            self.value = value
+        class Add(nn.Module):
+            def __init__(self, value):
+                super().__init__()
+                self.value = value
 
-        def forward(self, x):
-            return x + self.value
+            def forward(self, x):
+                return x + self.value
 
 
-    calculator = nn.Sequential(Add(4), Add(3), Add(6)) # y = x + 4 + 3 + 6
-    x = torch.tensor([2])
-    output = calculator(x)
-    # output = 15
+        calculator = nn.Sequential(Add(4), Add(3), Add(6)) # y = x + 4 + 3 + 6
+        x = torch.tensor([2])
+        output = calculator(x)
+        # output = 15
 
 ## 2) torch.nn.parameter.Parameter
 - module의 parameter로 여겨지는 일종의 tensor
 - tensor와 달리 자동저장 된다.
 - output tensor에 gradient를 계산하는 함수인 grad_fn가 생성된다.
 
-    import torch
-    from torch import nn
-    from torch.nn.parameter import Parameter
+        import torch
+        from torch import nn
+        from torch.nn.parameter import Parameter
 
-    class Linear(nn.Module):
-        def __init__(self):
-            super().__init__()
+        class Linear(nn.Module):
+            def __init__(self):
+                super().__init__()
 
-            self.W = Parameter(torch.Tensor([[0,1,2],[2,1,0]]))
-            self.b = Parameter(torch.Tensor([[1,1,1],[1,1,1]]))
+                self.W = Parameter(torch.Tensor([[0,1,2],[2,1,0]]))
+                self.b = Parameter(torch.Tensor([[1,1,1],[1,1,1]]))
 
-        def forward(self, x):
-            output = torch.addmm(self.b, x, self.W) # self.b + x @ self.W
+            def forward(self, x):
+                output = torch.addmm(self.b, x, self.W) # self.b + x @ self.W
 
-            return output
+                return output
 
-    x = torch.Tensor([[1, 2], [3, 4]])
+        x = torch.Tensor([[1, 2], [3, 4]])
 
-    linear = Linear()
-    output = linear(x)
-    # output = [[5,4,3], [9,8,7]]
+        linear = Linear()
+        output = linear(x)
+        # output = [[5,4,3], [9,8,7]]
 
 ## 3) torch.nn.Module.apply
 - 특정 함수를 전체가 아닌 부분 module에 적용시키는 명령어
@@ -77,17 +77,17 @@ $$\mathsf{Data} \Rightarrow \mathsf{Dataset} \Rightarrow \mathsf{DataLoader} \Ri
 - torch.utils.data의 Dataset class를 상속해서 만들고 map-style과 iterable-style의 두가지 타입이 있다.
 - map-style dataset은 __init__, __len__, __getitem__ 의 세가지 메서드로 구성된다.
 
-    from torch.utils.data import Dataset
+        from torch.utils.data import Dataset
 
-    class CustomDataset(Dataset):
-        def __init__(self,):
-            pass
+        class CustomDataset(Dataset):
+            def __init__(self,):
+                pass
 
-        def __len__(self):
-            pass
+            def __len__(self):
+                pass
 
-        def __getitem__(self, idx):
-            pass
+            def __getitem__(self, idx):
+                pass
 
 ### (1) __init__ 메서드
 - 데이터의 위치나 파일명 등의 초기화 작업
