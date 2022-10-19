@@ -56,18 +56,18 @@
 ## 3) torch.nn.Module.apply
 - 특정 함수를 전체가 아닌 부분 module에 적용시키는 명령어
 
-    import torch
-    from torch import nn
+        import torch
+        from torch import nn
 
-    @torch.no_grad()
-    def init_weights(m):
-        print(m)
-        if type(m) == nn.Linear:
-            m.weight.fill_(1.0)
-            print(m.weight)
+        @torch.no_grad()
+        def init_weights(m):
+            print(m)
+            if type(m) == nn.Linear:
+                m.weight.fill_(1.0)
+                print(m.weight)
 
-    net = nn.Sequential(nn.Linear(2, 2), nn.Linear(2, 2))
-    net.apply(init_weights)
+        net = nn.Sequential(nn.Linear(2, 2), nn.Linear(2, 2))
+        net.apply(init_weights)
 
 # 3. PyTorch Dataset & DataLoader
 - 데이터가 모델에 들어가는 것은 다음과 같은 과정으로 이루어진다.
