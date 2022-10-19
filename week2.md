@@ -102,10 +102,10 @@ $$\mathsf{Data} \Rightarrow \mathsf{Dataset} \Rightarrow \mathsf{DataLoader} \Ri
 ## 2) DataLoader
 - 모델 학습을 위해 데이터를 mini batch 단위로 제공한다.
 
-    DataLoader(dataset, batch_size=1, shuffle=False, sampler=None,
-               batch_sampler=None, num_workers=0, collate_fn=None,
-               pin_memory=False, drop_last=False, timeout=0,
-               worker_init_fn=None)
+        DataLoader(dataset, batch_size=1, shuffle=False, sampler=None,
+                   batch_sampler=None, num_workers=0, collate_fn=None,
+                   pin_memory=False, drop_last=False, timeout=0,
+                   worker_init_fn=None)
 
 ### (1) sampler / batch_sampler
 - 데이터의 index를 원하는 방식으로 조정
