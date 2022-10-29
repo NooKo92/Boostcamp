@@ -110,12 +110,12 @@ $$\mathsf{Data} \Rightarrow \mathsf{Dataset} \Rightarrow \mathsf{DataLoader} \Ri
 ### (1) sampler / batch_sampler
 - 데이터의 index를 원하는 방식으로 조정
 - shuffle이 False여야 한다.
-- SequentialSampler : 항상 같은 순서
-- RandomSampler : 랜덤, replacemetn 여부 선택 가능, 개수 선택 가능
-- SubsetRandomSampler : 랜덤 리스트, 위와 두 조건 불가능
-- WeigthRandomSampler : 가중치에 따른 확률
-- BatchSampler : batch단위로 sampling 가능
-- DistributedSampler : 분산처리 (torch.nn.parallel.DistributedDataParallel과 함께 사용)
+    - SequentialSampler : 항상 같은 순서
+    - RandomSampler : 랜덤, replacemetn 여부 선택 가능, 개수 선택 가능
+    - SubsetRandomSampler : 랜덤 리스트, 위와 두 조건 불가능
+    - WeigthRandomSampler : 가중치에 따른 확률
+    - BatchSampler : batch단위로 sampling 가능
+    - DistributedSampler : 분산처리 (torch.nn.parallel.DistributedDataParallel과 함께 사용)
 
 ### (2) num_workers
 - 데이터를 불러올 때 사용하는 sub-process 개수
