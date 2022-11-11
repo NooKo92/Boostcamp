@@ -61,6 +61,7 @@ $$\mathsf{Deep\ Learning} \subset \mathsf{Machine\ Learning} \subset \mathsf{Art
 - Generalization gap이 작은 것이 Test error 또한 작은 것을 의미하지는 않는다.
 
 ### (2) Underfitting vs. Overfitting
+![mlconcepts_image5](https://user-images.githubusercontent.com/113276742/201312709-60d80a10-93c0-4ef9-a3ec-db20771a0411.png)
 
 
 ### (3) Cross-Validation
