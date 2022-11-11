@@ -251,14 +251,183 @@ ILSVRC(ImageNet Large-Scale Visual Recognition Challenge)에서 좋은 성과를
     - V. Dropout 사용
 
 - ReLU activation
-    - I. 
+    - I. 선형 모델의 특성 보존
+    - II. 경사하강법으로 최적화하기 쉬움
+    - III. 좋은 generalization 성능
+    - IV. Vanishing gradient problem 극복
 
 ## 2) VGGNet
+- 3x3 convolution filter로 깊이 증가
+    - 3x3 2번과 5x5 1번은 결과는 같지만 parameter 수가 3x3 2번이 더 적다.
+- Fully conneted layers를 위한 1x1 convolution 사용
+- Dropout 사용
 ## 3) GoogLeNet
+- Network-in-network(NiN)와 inception block을 결합
+- Inception block
+    - 1x1 kernel을 사용함으로써 채널 수를 줄이고 결과적으로 parameter 수가 줄어듦.
+
 ## 4) ResNet
+- 깊은 신경망일수록 overfitting이 잘 일어나기때문에 학습이 어렵다.
+- Resnet에서는 identity map을 추가
+    - $f(x) -> x+f(x)$ weight가 추가된 항과 추가되지 않은 항을 결함
+- Parameter 수를 줄이면서 성능은 향상시킴
+
 ## 5) DenseNet
+- Addition 대신 concatenation 사용
+- Dense block
+    - 각 layer에서 이전의 layer들을 concat
+    - 채널의 수가 기하급수적으로 증가
+- Transition Block
+    - Batch Norm -> 1x1 Conv -> 2x2 AvgPooling
+    - Dimension reduction
+
+## 6) Summary
+- Key takeaways
+    - VGG: repeated 3x3 blocks
+    - GoogLeNet: 1x1 convolution
+    - ResNet: skip-connection
+    - Densnet: Concatenation
 
 # 6. Computer Vision Applications
+## 1) Semantic Segmentation
+- Image의 모든 pixel을 labeling하는 문제
+- 자율주행에 많이 활용된다.
+
+### (1) Fully Convolutional Network
+- 일반적인 CNN 구조는 마지막에 dense layer를 통과시킨다.
+- Dense layer를 없애고 그냥 convolution laye를 사용하는 것을 convolutionalization이라고 하고 dense layer가 없어진 network를 fully convolutional network라고 한다.
+- Fully connected layers를 fully convolutional layers로 바꾸면 단순 분류만을 알려주는 결과에서 heat map과 같은 형태로 바뀐다.
+- FCN은 어떤 input size에서도 실행되지만 output size가 줄어들게 된다.
+- 줄어든 output 차원을 다시 늘려줘야 한다.
+
+### (2) Deconvolution (convolution transpose)
+- 말그대로 convolution을 반대방향으로 함으로써 output size를 늘려준다.
+
+## 2) Detection
+### (1) R-CNN
+- I. Image 선택
+- II. Image 안에서 특정 영역들 선택
+- III. 각 영역에 대해 계산 (Alexnet)
+- IV. 계산된 영역들 분류 (SVM)
+
+### (2) SPPNet
+- 전반적으로 R-CNN과 비슷하나 선택된 영역들의 tensor만 뽑아서 Image 전체에 대해 CNN을 한번만 거치는 방법
+
+### (3) Fast R-CNN
+- I. Image 안에서 영역선택
+- II. CNN 사용
+- III. ROI pooling을 사용해서 각 영역에 대해 일정 길이의 feature 추출
+- IV. 영역 분류와 neural network를 이용해 더 나은 bounding box 조정
+
+### (4) Faster R-CNN
+- Faster R-CNN = Regional Proposal Network + Fast R-CNN
+- Region Proposal Network : 크기가 미리 정해진 anchor box를 사용하여 bounding box 안에 물체가 있는지를 판단
+- RPN은 FCN을 사용하고 총 parameter 수는 $9 \times (4+2)=54$개
+    - 9: anchor box size(128, 256, 512) x box ratio(1:1, 1:2, 2:1)
+    - 4: box의 x, y 변화량
+    - 2: box 분류(물체가 있는지 없는지 판단)
+
+### (5) YOLO
+- YOLO(v1): 극도로 빠른 물체 탐색 알고리즘
+- Bounding box를 고름과 동시에 분류(bounding box의 선택과 그 box에 대한 결과를 따로 계산하는 faster R-CNN보다 빠르다.)
+- Output tensor의 크기는 $S \times S \times (B \times 5 + C)$
+    - $S \times S$: box의 cell 개수
+    - $B \times 5$: B개의 bounding box와 box의 offset(x, y, w, h)과 confidence
+    - C:클래스 개수
+     
 # 7. Recurrent Neural Networks
-# 8. Transformer 
+## 1) Sequential Model
+- 소리, 문자열, 주가 등의 데이터를 sequence data로 분류
+- 길이가 정해져있지 않기 때문에 CNN을 적용할 수 없다.
+- Sequence data는 독립동등분포 가정을 잘 위배하기 때문에 순서를 바꾸거나 과거 정보에 손실이 발생하면 데이터의 확률분포도 바뀌게 된다.
+- I. Naive Sequence Model: 현재 시점 이전의 모든 데이터를 포함
+$$p(x_t \vert x_{t-1},\ x_{t-2},\ \cdots)$$
+- II. Auto Regressive Model: 현재 시점 이전에서 특정 개수만큼의 데이터만을 포함
+$$p(x_t \vert x_{t-1},\ \cdots\ x_{t-\tau})$$
+- III. Markov Model: (first-order autoregressive model)
+$$p(x_1,\ \cdots,\ x_T) = p(x_T \vert x_{T-1})p(x_{T-1},\vert x_{T-2})\ \cdots p(x_2 \vert x_1)p(x_1) = \prod_{t=1}^T p(x_t \vert x_{t-1})$$
+- IV. Latent Autoregressive Model
+$$\hat{x} = p(x_t \vert h_t)$$
+$$h_t = g(h_{t-1}, x_{t-1})$$
+$h_t$: summary of the past
+
+## 2) Recurrent Neural Network
+- 잠재변수를 신경망을 통해 반복해서 사용하여 sequence data의 패턴을 학습하는 모델
+- Short-term dependencies: 먼 과거의 data는 영향력이 작아진다.
+- Vanishing/Exploding gradient
+$$h_1 = \phi(W^Th_0 + U^Tx_1)$$
+$$h_2 = \phi(W^T\phi(W^Th_0 + U^Tx_1) + U^Tx_2)$$
+$$h_3 = \phi(W^T\phi(W^T\phi(W^Th_0 + U^Tx_1) + U^Tx_2) + U^Tx_3)$$
+$$h_4 = \phi(W^T\phi(W^T\phi(W^T\phi(W^Th_0 + U^Tx_1) + U^Tx_2) + U^Tx_3) + U^Tx_4)$$
+$\phi$가 Sigmoid일 경우 $h_0$는 점점 작아져서 0에 수렴하게 되고(Vanishing), $\phi$가 ReLU일 경우 $h_0$는 점점 커져서(Exploding) 학습이 안 되게 된다.
+
+## 3) Long Short Term Memory
+### (1) Forget gate
+- 버려야 할 정보를 결정
+$$f_t = \sigma(W_f \cdot [h_{t-1},\ x_t] + b_f)$$
+
+### (2) Input gate
+- Cell state에 저장해야될 정보를 결정
+$$i_t = \sigma(W_i \cdot [h_{t-1},\ x_t] + b_i)$$
+$$\tilde{C_t} = tanh(W_c \cdot [h_{t-1},\ x_t] + b_c)$$
+
+### (3) Update gate
+- Cell state 업데이트
+$$i_t = \sigma(W_i \cdot [h_{t-1},\ x_t] + b_i)$$
+$$C_t = f_t * C_{t-1} + i_t*\tilde{C_t}$$
+
+### (4) Output gate
+- 업데이트된 cell state를 이용해 output 계산
+$$O_t = \sigma(W_o \cdot [h_{t-1},\ x_t] + b_o)$$
+$$h_t = O_t * tanh(C_t)$$
+
+## 4) Gated Recurrent Unit(GRU)
+- Gate 2개로 LSTM보다 더 간단한 구조(reset gate, update gate)
+- No cell state, just hidden state
+$$z_t = \sigma(W_z \cdot [h_{t-1},\ x_t])$$
+$$r_t = \sigma(W_r \cdot [h_{t-1},\ x_t])$$
+$$\tilde{h_t} = tanh(W \cdot [r_t * h_{t-1}, x_t])$$
+$$ h_t = (1-z_t) * h_{t-1} + z_t * \tilde{h_t}$$
+
+# 8. Transformer
+## 1) Sequential Model
+- 무엇이 sequential model을 다루기 어려운 문제로 만드는가?
+    - I. Original sequence: 1, 2, 3, 4, 5, 6, 7
+    - II. Trimmed sequence: 1, 2, 3, 4, 5
+    - III. Omitted sequence: 1, 2, 4, 7
+    - IV. Permuted sequence: 2, 3, 4, 6, 5, 7
+
+## 2) Transformer
+- Transformer는 sequential data를 처리하고 encoding하는 방법이기 때문에 기계어 번역뿐만 아니라 이미지 분류, 이미지 탐색 등 다양한 분야에서 활용 가능하다.
+- Self attention은 RNN과 달리 재귀적으로 작동되지 않고 한번의 작동으로 결과를 내놓는다.
+- 동일하지만 공유되지는 않는 6개의 Encoder와 Decoder가 쌓여있는 구조로 되어있다.
+
+### (1) Encoder가 n개의 단어를 처리하는 방법
+- 각 Encoder는 self-attention과 feed forward neural network로 구성
+- Self-attention
+    - n개의 단어가 주어지면 각 단어를 embedding vector로 바꾼다.
+    - 각 단어를 embedding할 때 나머지 n-1개를 고려한다. 즉, 각 단어들 사이에 dependency가 존재한다.
+    - Embedding vector 외에 query, key, value라는 3가지 벡터를 추가로 만든다. 
+    - Score vector를 만든다. 
+    $$\mathsf{score} = Q \cdot K^T$$
+    - Score vector를 key vector 차원의 제곱근으로 나눠 normalization 한다.
+    $$\mathsf{nomalized\ score} = \mathsf{score} \div \sqrt{d_K}$$
+    - Normalized score에 softmax를 취해줘서 attention weight를 만든다.
+    - 최종적으로 사용할 encoding vector는 value vector에 attention weight를 곱해서 더한 값이다.
+    $$\therefore Z = softmax \left( \cfrac{Q \cdot K^T}{\sqrt{d_K}} \right)V$$
+- Feed forward neural network에서는 dependency가 없다.
+- Multi-headed attention
+    - Query, key, value vector를 각각 n개씩 만든다.
+    - 위에서 만든 vector로 계산한 encoding vector들을 concat해서 wieght 행렬과의 곱으로 size를 줄인다.
+    - 실제 구현된 코드에서는 주어진 input을 전부 사용하지 않고 head 개수만큼 나눠서 따로따로 적용시킨다.
+- 문장에서는 단어의 순서 또한 중요하기때문에 positional encoding을 해줘야 하고 방법은 단순히 embedding vector에 positional vector를 더하는 것이다.
+
+### (2) Encoder와 Decoder 사이에 일어나는 일
+- Encoder에서 decoder로 key와 value vector를 보낸다.
+
+### (3) Decoder가 m개의 단어를 내놓는 방법
+- Self-attention에서는 앞에 있는 단어들만 dependent하게 학습시키는 masking을 사용한다.
+- Encoder-Decoder Attention에서는 앞에 있는 단어들의 query vector와 encoder에서 온 key, value vector로 enconding vector를 만든다.
+- 마지막으로 단어들의 분포를 만들어서 그 중 가장 적절한 값을 내놓는다.
+
 # 9. Generative Models
