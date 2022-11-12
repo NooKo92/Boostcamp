@@ -30,9 +30,12 @@ $$\mathsf{Deep\ Learning} \subset \mathsf{Machine\ Learning} \subset \mathsf{Art
 - Loss Function은 모델의 성능을 정량화한다.
 - Loss Function은 문제의 유형에 따라 달라진다.
 - 대표적으로 다음과 같은 세가지의 loss function이 사용된다.
-    - Regression Task: $MSE = \cfrac{1}{N} \sum_{i=1}^N \sum_{d=1}^D \left( y_i^{(d)}-\hat{y}_i^{(d)} \right)^2$
-    - Classification Task: $CE = -\cfrac{1}{N} \sum_{i=1}^N \sum_{d=1}^D y_i^{(d)}\log\hat{y}_i^{(d)}$
-    - Probabilistic Task: $MLE = \cfrac{1}{N} \sum_{i=1}^N \sum_{d=1}^D \log\mathcal N \left( y_i^{(d)};\hat{y}_i^{(d)}, 1 \right)$
+    - Regression Task: 
+    $$MSE = \cfrac{1}{N}\sum_{i=1}^N \sum_{d=1}^D \left( y_i^{(d)}-\hat{y}_i^{(d)} \right)^2$$
+    - Classification Task: 
+    $$CE = -\cfrac{1}{N} \sum_{i=1}^N \sum_{d=1}^D y_i^{(d)}\log\hat{y}_i^{(d)}$$
+    - Probabilistic Task: 
+    $$MLE = \cfrac{1}{N} \sum_{i=1}^N \sum_{d=1}^D \log\mathcal N \left( y_i^{(d)};\hat{y}_i^{(d)}, 1 \right)$$
 
 ### (4)Optimization Algorithm
 - Optimization Algorithm은 loss function을 최소화하기 위해 parameter를 조정한다.
@@ -188,8 +191,9 @@ $$\left( f*g\right)(i,\ j,\ k) = \sum_p \sum_q \sum_r f(p,\ q,\ r)g(i+p,\ j+q,\ 
 - examples
     - I.
     
-    $$\begin{bmatrix} a_{11}&a_{12} \\ a_{21}&a_{22} \end{bmatrix} * \begin{bmatrix} b_{11}&b_{12}&b_{13} \\ b_{21}&b_{22}&b_{23} \\ b_{31}&b_{32}&b_{33} \end{bmatrix} = \begin{bmatrix} a_{11}b_{11}+a_{12}b_{12}+a_{21}b_{21}+a_{22}b_{22}&a_{11}b_{12}+a_{12}b_{13}+a_{21}b_{22}+a_{22}b_{23} \\ a_{11}b_{21}+a_{12}b_{22}+a_{21}b_{31}+a_{22}b_{32}&a_{11}b_{22}+a_{12}b_{23}+a_{21}b_{32}+a_{22}b_{33} \end{bmatrix}$$
-    $$\quad [2\times2] \qquad \qquad [3\times3] \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \;  [2\times2]$$
+    $$\begin{bmatrix} a_{11}&a_{12} \\\ a_{21}&a_{22} \end{bmatrix} * \begin{bmatrix} b_{11}&b_{12}&b_{13} \\\ b_{21}&b_{22}&b_{23} \\\ b_{31}&b_{32}&b_{33} \end{bmatrix} = \begin{bmatrix} a_{11}b_{11}+a_{12}b_{12}+a_{21}b_{21}+a_{22}b_{22}&a_{11}b_{12}+a_{12}b_{13}+a_{21}b_{22}+a_{22}b_{23} \\\ a_{11}b_{21}+a_{12}b_{22}+a_{21}b_{31}+a_{22}b_{32}&a_{11}b_{22}+a_{12}b_{23}+a_{21}b_{32}+a_{22}b_{33} \end{bmatrix}$$
+    
+    $$[2\times2] \qquad \qquad [3\times3] \qquad \qquad \qquad \qquad \qquad \qquad \qquad \qquad \quad   [2\times2] \qquad \qquad \qquad \qquad \qquad \qquad \quad$$
 
     - II.
     $$\left( 5,\ 5,\ 3 \right) * \left( 32,\ 32,\ 3 \right) \rightarrow \left( 28,\ 28,\ 1 \right)$$
@@ -198,11 +202,13 @@ $$\left( f*g\right)(i,\ j,\ k) = \sum_p \sum_q \sum_r f(p,\ q,\ r)g(i+p,\ j+q,\ 
     $$\mathsf{four\ kernels}\left( 5,\ 5,\ 3 \right) * \left( 32,\ 32,\ 3 \right) \rightarrow \left( 28,\ 28,\ 4 \right)$$
 
     - IV.
-    $$\left( 32,\ 32,\ 3 \right)*\mathsf{four\ kernels}\left( 5,\ 5,\ 3 \right) = \left( 28,\ 28,\ 4 \right) \\\rightarrow \left( 28,\ 28,\ 4 \right)*\mathsf{ten\ kernels}\left( 5,\ 5,\ 4 \right) = \left( 24,\ 24,\ 10 \right)  $$
+    $$\left( 32,\ 32,\ 3 \right) * \mathsf{four\ kernels} \left( 5,\ 5,\ 3 \right) = \left( 28,\ 28,\ 4 \right) \\ \rightarrow \left( 28,\ 28,\ 4 \right)*\mathsf{ten\ kernels}\left( 5,\ 5,\ 4 \right) = \left( 24,\ 24,\ 10 \right) $$
 
 ## 3) Backpropagation of Convolution
 다음과 같이 kernel을 w, input을 x, output을 O라 할 때,
-$$\begin{bmatrix} w_{11}&w_{12} \\ w_{21}&w_{22} \end{bmatrix} * \begin{bmatrix} x_{11}&x_{12}&x_{13} \\ x_{21}&x_{22}&x_{23} \\ x_{31}&x_{32}&x_{33} \end{bmatrix} = \begin{bmatrix} O_{11}&O_{12} \\ O_{21}&O_{22} \end{bmatrix}$$
+
+$$\begin{bmatrix} w_{11}&w_{12} \\\ w_{21}&w_{22} \end{bmatrix} * \begin{bmatrix} x_{11}&x_{12}&x_{13} \\\ x_{21}&x_{22}&x_{23} \\\ x_{31}&x_{32}&x_{33} \end{bmatrix} = \begin{bmatrix} O_{11}&O_{12} \\\ O_{21}&O_{22} \end{bmatrix}$$
+
 $$O_{11} = w_{11}x_{11}+w_{12}x_{12}+w_{21}x_{21}+w_{22}x_{22}$$
 $$O_{12} = w_{11}x_{12}+w_{12}x_{13}+w_{21}x_{22}+w_{22}x_{23}$$
 $$O_{21} = w_{11}x_{21}+w_{12}x_{22}+w_{21}x_{31}+w_{22}x_{32}$$
@@ -213,7 +219,9 @@ chain rule에 의해
 $$\cfrac{\partial \mathcal{L}}{\partial w_{11}} = \cfrac{\partial \mathcal{L}}{\partial O_{11}}\times\cfrac{\partial O_{11}}{\partial w_{11}} + \cfrac{\partial \mathcal{L}}{\partial O_{12}}\times\cfrac{\partial O_{12}}{\partial w_{11}} + \cfrac{\partial \mathcal{L}}{\partial O_{21}}\times\cfrac{\partial O_{21}}{\partial w_{11}} + \cfrac{\partial \mathcal{L}}{\partial O_{22}}\times\cfrac{\partial O_{22}}{\partial w_{11}}$$
 $$= \cfrac{\partial \mathcal{L}}{\partial O_{11}}x_{11} + \cfrac{\partial \mathcal{L}}{\partial O_{12}}x_{12} + \cfrac{\partial \mathcal{L}}{\partial O_{21}}x_{21} + \cfrac{\partial \mathcal{L}}{\partial O_{22}}x_{22}$$
 이고, 이것을 matrix 형태로 바꾸면
-$$\begin{bmatrix} \cfrac{\partial \mathcal{L}}{\partial w_{11}}&\cfrac{\partial \mathcal{L}}{\partial w_{12}} \\\\ \cfrac{\partial \mathcal{L}}{\partial w_{21}}&\cfrac{\partial \mathcal{L}}{\partial w_{22}} \end{bmatrix} = \begin{bmatrix} x_{11}&x_{12}&x_{13} \\ x_{21}&x_{22}&x_{23} \\ x_{31}&x_{32}&x_{33} \end{bmatrix} * \begin{bmatrix} \cfrac{\partial \mathcal{L}}{\partial O_{11}}&\cfrac{\partial \mathcal{L}}{\partial O_{12}} \\\\ \cfrac{\partial \mathcal{L}}{\partial O_{21}}&\cfrac{\partial \mathcal{L}}{\partial O_{22}} \end{bmatrix}$$
+
+$$\begin{bmatrix} \cfrac{\partial \mathcal{L}}{\partial w_{11}}&\cfrac{\partial \mathcal{L}}{\partial w_{12}} \\\ \cfrac{\partial \mathcal{L}}{\partial w_{21}}&\cfrac{\partial \mathcal{L}}{\partial w_{22}} \end{bmatrix} = \begin{bmatrix} x_{11}&x_{12}&x_{13} \\\ x_{21}&x_{22}&x_{23} \\\ x_{31}&x_{32}&x_{33} \end{bmatrix} * \begin{bmatrix} \cfrac{\partial \mathcal{L}}{\partial O_{11}}&\cfrac{\partial \mathcal{L}}{\partial O_{12}} \\\ \cfrac{\partial \mathcal{L}}{\partial O_{21}}&\cfrac{\partial \mathcal{L}}{\partial O_{22}} \end{bmatrix}$$
+
 이다.
 
 결국 convolution의 backpropagation은 forward 형태에서 방향만 반대로 convolution되는 방식임을 알 수 있다.
@@ -448,7 +456,8 @@ $$ h_t = (1-z_t) * h_{t-1} + z_t * \tilde{h_t}$$
     - write : $X \sim Ber(p)$
 - Categorical distribution: (biased) m-sided dice
     - $D = \{1, \cdots, m\}$
-    - Specify $P(Y=i) = p_i$ such that $\sum^m_{i=1}p_i = 1$
+    - Specify $P(Y=i) = p_i$ such that 
+    $$\sum^m_{i=1}p_i = 1$$
     - write: $Y \sim Cat(p_1, \cdots, p_m)$
 
 ### (3) Example
@@ -478,7 +487,7 @@ $$ h_t = (1-z_t) * h_{t-1} + z_t * \tilde{h_t}$$
 - Using the chain rule, $P(X_1, \cdots, X_n) = P(X_1)P(X_2 \vert X_1)P(X_3 \vert X_1, X_2) \cdots P(X_n \vert X_1, \cdots, X_n)$
 - How many parameters?
     - $P(X_1)$: 1 parameter
-    - $P(X_2 \vert X_1)$: 2 parameters (One per $P(X_2 \vert X_1 = 0)$ and $P(X_2 \vert X_1 = 1)$)
+    - $P(X_2 \vert X_1)$: 2 parameters (One per $P(X_2 \vert X_1 = 0)\ \mathsf{and}\ P(X_2 \vert X_1 = 1)$ )
     - $P(X_3 \vert X_1, X_2)$: 4 parameters
     - Hence, the total number becomes $1+2+2^2+ \cdots +2^{n-1} = 2^n -1$
     - Now, suppose $X_{i+1} \perp X_1, \cdots, X_{i-1} \vert X_i$ (Markov assumption), then $p(x_1, \cdots, x_n) = p(x_1)p(x_2 \vert x_1)p(x_3 \vert x_2) \cdots p(x_n \vert x_{n-1})$
@@ -534,6 +543,7 @@ $$V_P[\tilde{g}] = V_P \left[\cfrac{1}{T}\sum^T_{t=1}g(x^t)\right] = \cfrac{V_P[
 - For maximum likelihood learning, empirical risk minimization(ERM) is often used.
 - However, ERM often suffers from its overfitting.
     - Extreme case: The model remembers all training data.
+    
     $$ p(x) = \frac{1}{|D|}\sum^{|D|}_{i=1}\delta(x, x_i)$$
 - To achieve better generalization, we typically restrict the hypothesis space of distributions that we search over.
 - However, it could deteriorate the performance of the generative model.
@@ -578,13 +588,18 @@ $$\min_G \max_D V(D,G) = E_{x\sim P_{data}(x)}[logD(x)] + E_{x\sim P_z(z)}[log(1
     - Discriminator objective
     $$\max_D V(G,D) = E_{x\sim P_{data}}[logD(x)] + E_{x\sim P_G}[log(1-D(x))]$$
     - The optimal discriminator is 
+    
     $$D^*_G = \cfrac{P_{data}(x)}{P_{data}(x) + P_G(x)}$$
     - Generator objective
     $$\min_G V(G,D) = E_{x\sim P_{data}}[logD(x)] + E_{x\sim P_G}[log(1-D(x))]$$
     - Plugging in the optimal discriminator, we get
+    
     $$V(G, D^*_G(x)) = E_{x\sim P_{data}}\left[log\cfrac{P_{data}(x)}{P_{data}(x)+P_G(x)}\right] + E_{x\sim P_G}\left[log\cfrac{P_G(x)}{P_{data}(x)+P_G(x)}\right]$$
+    
     $$= E_{x\sim P_{data}}\left[log\cfrac{P_{data}(x)}{\cfrac{P_{data}(x)+P_G(x)}{2}}\right] + E_{x\sim P_G}\left[log\cfrac{P_G(x)}{\cfrac{P_{data}(x)+P_G(x)}{2}}\right] - log4$$
+    
     $$= D_{KL}\left[P_{data}, \cfrac{P_{data}+P_G}{2}\right] + D_{KL}\left[P_G, \cfrac{P_{data}+P_G}{2}\right] - log4$$
+    
     $$= 2D_{JSD}[P_{data}, P_G] - log4$$
 
 ## 7) Diffusion Models
