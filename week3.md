@@ -432,3 +432,163 @@ $$ h_t = (1-z_t) * h_{t-1} + z_t * \tilde{h_t}$$
 - 마지막으로 단어들의 분포를 만들어서 그 중 가장 적절한 값을 내놓는다.
 
 # 9. Generative Models
+## 1) Introduction
+### (1) Learning a Generative model
+- Suppose that we given images of dogs
+- We want to learn a probability distribution $p(x)$ such that
+    - Generation: If we sample $\tilde{x} \sim p(x)$, $\hat{x}$ should look like a dog
+    - Density estimation: $p(x)$ should be high if $x$ looks like a dog, and low otherwise
+        - This is also known as explicit models.
+- Then, how can we represent $p(x)$?
+
+### (2) Basic Discrete Distributions
+- Bernoulli distribution: (biased) coin flip
+    - $D = \{Heads, Tails\}$
+    - Specify $P(X=Heads) = p$. Then, $P(X=Tails) = 1-p$
+    - write : $X \sim Ber(p)$
+- Categorical distribution: (biased) m-sided dice
+    - $D = \{1, \cdots, m\}$
+    - Specify $P(Y=i) = p_i$ such that $\sum^m_{i=1}p_i = 1$
+    - write: $Y \sim Cat(p_1, \cdots, p_m)$
+
+### (3) Example
+- Modeling a single pixel of an RGB image
+    - $(r, g, b) \sim p(R, G, B)$
+    - Number of cases?: 256 x 256 x 256
+    - How many parameters do we need to specify?
+    : 256 x 256 x 256 - 1 (나머지 하나는 자동으로 정해진다.)
+
+## 2) Independence
+### (1) Example
+- Suppose we have $X_1, \cdots, X_n$ of n binary pixels(a binary image)
+    - Number of cases?: $2 \times 2 \times \cdots \times 2 = 2^n$
+    - How many parameters do we need to specify? : $2^n -1$
+
+### (2) Structure Through Independence
+- What if $X_1, \cdots, X_n$ are independent, then $P(X_1, \cdots, X_n) = P(X_1)P(X_2) \cdots P(X_n)$
+    - Number of cases?: $2 \times 2 \times \cdots \times 2 = 2^n$
+    - How many parameters do we need to specify?: n
+    - $2^n$ entries can be described by just n numbers.
+
+### (3) Conditional Independence
+- Three important rules
+    - Chain rule: $p(x_1, \cdots, x_n) = p(x_1)p(x_2 \vert x_1)p(x_3 \vert x_1, x_2)\cdots p(x_n \vert x_1, \cdots, x_{n-1})$
+    - Bayes' rule: $p(x \vert y) = \cfrac{p(x,y)}{p(y)} = \cfrac{p(y \vert x)p(x)}{p(y)}$
+    - Conditional independence: If $x \perp y \vert z$, then $p(x \vert y, z) = p(x \vert z)$
+- Using the chain rule, $P(X_1, \cdots, X_n) = P(X_1)P(X_2 \vert X_1)P(X_3 \vert X_1, X_2) \cdots P(X_n \vert X_1, \cdots, X_n)$
+- How many parameters?
+    - $P(X_1)$: 1 parameter
+    - $P(X_2 \vert X_1)$: 2 parameters (One per $P(X_2 \vert X_1 = 0)$ and $P(X_2 \vert X_1 = 1)$)
+    - $P(X_3 \vert X_1, X_2)$: 4 parameters
+    - Hence, the total number becomes $1+2+2^2+ \cdots +2^{n-1} = 2^n -1$
+    - Now, suppose $X_{i+1} \perp X_1, \cdots, X_{i-1} \vert X_i$ (Markov assumption), then $p(x_1, \cdots, x_n) = p(x_1)p(x_2 \vert x_1)p(x_3 \vert x_2) \cdots p(x_n \vert x_{n-1})$
+    - How many parameters?: $2n-1$
+        - Hence, by leveraging the Markov assumption, we get exponential reduction on the number of parameters.
+        - Autoregressive models leverages this conditional independency.
+
+## 3) Autoregressive Models
+- Suppose we have 28 x 28 binary pixels.
+- Our goal is to learn $P(X) = P(X_1, \cdots, X_784)$ over $X \in \{0, 1\}^{784}$
+- Then, how can we parametrize $P(X)$?
+    - Let's use the chain rule to factir the joint distribution
+    - In other words,
+        - $P(X_{1:784}) = P(X_1)P(X_2 \vert X_1)P(X_3 \vert X_2) \cdots$
+        - This is called an autoregressive model.
+        - Note that we need an ordering (e.g. raster scan order) of all random variables.
+
+### (1) NADE: Neural Autoregressive Density Estimator
+- NADE is an explicit model that can compute the density of the given inputs.
+- BTW, how can we compute the density of the given image?
+    - Suppose that we have a binary image with 784 binary pixels(i.e., $\{x_1, x_2, \cdots, x_{784}\}$)
+    - Then, the joint probability is computed by
+        - $p(x_1, \cdots, x_{784}) = p(x_1)p(x_2 \vert x_1) \cdots p(x_{784} \vert x_{1:783})$ where each conditional probability $p(x_i \vert x_{1:i-1})$ is computed independently
+- In case of modeling continuous random variables, a mixture of Gaussian(MoG) can be used.
+
+### (2) Summary of Autoregressive Model
+- Easy to sample from
+    - sample $\tilde{x}_0 \sim p(x_0)$
+    - sample $\tilde{x}_1 \sim p(x_1 \vert x_0 = \bar{x}_0)$
+- Easy to compute probability $p(x=\bar{x})$
+    - compute $p(x_0 = \bar{x}_0)$
+    - compute $p(x_1 = \bar{x}_1 \vert x_0 = \bar{x}_0)$
+    - Multiply together (sum their logarithms)
+- Easy to be extended to continuous variables. For example, we can choose mixture of Gaussians.
+
+## 4) Maximum Likelihood Learning
+- Given a training set of examples, we can cast the generative model learning process as finding the best-approximating density model from the model family.
+- Then, how can we evaluate the goodness of the approximation?
+- KL-divergence
+$$D(P_{data} \Vert P_\theta) = E_{X \sim P_{data}}\left[log\left( \cfrac{P_{data}(x)}{P_\theta(x)} \right)\right] = \sum_x P_{data}(x)log \cfrac{P_{data}(x)}{P_\theta (x)}$$
+- We can simplify this with
+$$D(P_{data} \Vert P_\theta) = E_{X \sim P_{data}}\left[log\left( \cfrac{P_{data}(x)}{P_\theta(x)} \right)\right] = E_{X\sim P_{data}}\left[ logP_{data}(x) \right] - E_{X \sim P_{data}}\left[logP_\theta(x)\right]$$
+- As the first term does not depend on $P_\theta$, minimizing the KL-divergence is equivalent to maximizing the expected log-likelihood.
+$$arg \min_{P_\theta} D(P_{data} \Vert P_\theta) = arg \min_{P_\theta} - E_{X \sim P_{data}}\left[log P_\theta(x)\right] = arg \max_{P_\theta} E_{x \sim P_{data}}\left[ log P_\theta(x)\right]$$
+- Approximate the expected log-likelihood
+$$ E_{x \sim P_{data}}\left[logP_\theta(x)\right]$$
+with the empirical log-likelihood
+$$E_D\left[logP_\theta(x)\right] = \cfrac{1}{|D|}\sum_{x \in D}logP_\theta(x)$$
+- Maximum likelihood learning is then:
+$$\max_{P_\theta}\cfrac{1}{|D|}\sum_{x\in D}logP_\theta(x)$$
+- Variance of Monte Carlo estimate is high:
+$$V_P[\tilde{g}] = V_P \left[\cfrac{1}{T}\sum^T_{t=1}g(x^t)\right] = \cfrac{V_P[g(x)]}{T}$$
+- For maximum likelihood learning, empirical risk minimization(ERM) is often used.
+- However, ERM often suffers from its overfitting.
+    - Extreme case: The model remembers all training data.
+    $$ p(x) = \frac{1}{|D|}\sum^{|D|}_{i=1}\delta(x, x_i)$$
+- To achieve better generalization, we typically restrict the hypothesis space of distributions that we search over.
+- However, it could deteriorate the performance of the generative model.
+- Usually, MLL if prone to under-fitting as we often use simple parametric such as spherical Gaussians.
+- What about other ways of measuring the similarity?
+    - KL-divergence leads to maximum likelihood learning or Variational Autoencoder(VAE).
+    - Jensen-Shannon divergence leads to Generative Adversarial Network(GAN).
+    - Wasserstein distance leads to Wasserstein Autoencoder(WAE) or Adversarial Autoencoder(AAE).
+
+## 5) Latent Variable Models
+- Is an autoencoder a generaive Model? No!
+
+### (1) Variational Autoencoder
+- The objective is simple: Maximize $P_\theta(x)$
+- Variational inference(VI)
+    - The goal of VI is to optimize the variational distribution that best matches the posterior distribution.
+        - Posterior distribution: $P_\theta(z|x)$
+        - Variational distribution: $q_\theta(z|x)$
+    - In particular, we want to find the variational distribution that minimizes the KL divergence between the true posterior.
+    $$\underset{Maximum\ Likelihood\ Learning \uparrow} {logP_\theta(x)} = \int_z q_\phi(z|x)logP_\theta(x)dx$$
+    $$= E_{z \sim q_\phi}(z|x)\left[ log\cfrac{P_\theta(x) P_\theta(z|x)}{P_\theta(z|x)}\right] = E_{z \sim q_\phi}(z|x)\left[log \cfrac{P_\theta(x,z)}{P_\theta(z|x)}\right]$$
+    $$= E_{z \sim q_\phi}(z|x)\left[log \cfrac{P_\theta(x)q_\phi(z|x)}{P_\theta(z|x)q_\phi(z|x)}\right]$$
+    $$= E_{z \sim q_\phi}(z|x)\left[log \cfrac{P_\theta(x,z)}{q_\phi(z|x)}\right] + E_{z \sim q_\phi}(z|x)\left[log \cfrac{q_\phi(z|x)}{P_\theta(z|x)}\right]$$
+    $$= E_{z \sim q_\phi}(z|x)\left[log \cfrac{P_\theta(x,z)}{q_\phi(z|x)}\right] + D_{KL}(q_\phi(z|x)\Vert P_\theta(z|x))$$
+
+    ### (2) Evidence Lower Bound
+    $$\underset{ELBO\uparrow}{E_{z \sim q_\phi}(z|x)\left[log \cfrac{P_\theta(x,z)}{q_\phi(z|x)}\right]} = \int log\cfrac{P_\theta(x|z)P(z)}{q_\phi(z|x)}q_\phi(z|x)dz$$
+    $$=E_{q_\phi(z|x)}[P_\theta(x|z)] - D_{KL}(q_\phi(z|x) \Vert p(z))$$
+    - $E_{q_\phi(z|x)}[P_\theta(x|z)]$: Reconstruction Term. This term minimizes the reconstruction loss of an auto-encoder.
+    - $D_{KL}(q_\phi(z|x) \Vert p(z))$: Prior Fitting Term. This term enforces the latent distribution to be similar to the prior distribution.
+    - Key Limitation
+        - It is an intractable model(hard to evaluate likelihood)
+        - The prior fitting terms should be differentiable, hence it is hard to use diverse latent prior distributions.
+        - In most cases, we use an isotropic Gaussian where we have a closed-form for the prior fitting term.
+        $$D_{KL}(q_\phi(z|x)\Vert \mathcal{N}(0,I)) = \frac{1}{2}\sum^D_{i=1}(\sigma^2_{z_i} + \mu^2_{z_i} - log(\sigma^2_{z_i}) -1)$$
+
+## 6) Generative Adversarial Networks
+$$\min_G \max_D V(D,G) = E_{x\sim P_{data}(x)}[logD(x)] + E_{x\sim P_z(z)}[log(1-D(G(z)))]$$
+
+### (1) GAN Objective
+- GAN is a two player minimax game between generator and discriminator.
+    - Discriminator objective
+    $$\max_D V(G,D) = E_{x\sim P_{data}}[logD(x)] + E_{x\sim P_G}[log(1-D(x))]$$
+    - The optimal discriminator is 
+    $$D^*_G = \cfrac{P_{data}(x)}{P_{data}(x) + P_G(x)}$$
+    - Generator objective
+    $$\min_G V(G,D) = E_{x\sim P_{data}}[logD(x)] + E_{x\sim P_G}[log(1-D(x))]$$
+    - Plugging in the optimal discriminator, we get
+    $$V(G, D^*_G(x)) = E_{x\sim P_{data}}\left[log\cfrac{P_{data}(x)}{P_{data}(x)+P_G(x)}\right] + E_{x\sim P_G}\left[log\cfrac{P_G(x)}{P_{data}(x)+P_G(x)}\right]$$
+    $$= E_{x\sim P_{data}}\left[log\cfrac{P_{data}(x)}{\cfrac{P_{data}(x)+P_G(x)}{2}}\right] + E_{x\sim P_G}\left[log\cfrac{P_G(x)}{\cfrac{P_{data}(x)+P_G(x)}{2}}\right] - log4$$
+    $$= D_{KL}\left[P_{data}, \cfrac{P_{data}+P_G}{2}\right] + D_{KL}\left[P_G, \cfrac{P_{data}+P_G}{2}\right] - log4$$
+    $$= 2D_{JSD}[P_{data}, P_G] - log4$$
+
+## 7) Diffusion Models
+- Diffusion models progressively generate images from noise
+- Forward (diffusion) process progressively injects noise to an image.
+$$P_\theta(X_{t-1}|X_t): = \mathcal{N}(X_{t-1};\mu_\theta(X_t,t), \sum_\theta(X_t,t))$$
+- The reverse process is learned in such a way to denoise the perturbed image back to a clean image.
