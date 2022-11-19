@@ -262,7 +262,8 @@
 ### (2) Update Calculation
 - Self loop가 있는 node1에 node2, 3, 4번이 연결되어 있는 상황을 가정하면
 $$H^{(l+1)}_1 = \sigma\left(H^{(l)}_1W^{(l)} + H^{(l)}_2W^{(l)} + H^{(l)}_3W^{(l)} + H^{(l)}_4W^{(l)} + b^{(l)} \right)$$
-$$\Rightarrow H^{(l+1)}_i = \sigma\left(\sum_{j \in \mathcal{N}{(i)}}H^{(l)}_jW^{(l)} + b^{(l)}\right) = \sigma\left(AH^{(l)}W^{(l)} + b^{(l)} \right)$$
+
+$$\Rightarrow H_i^{(l+1)} = \sigma\left(\sum_{j\in \mathcal{N}{(i)}} H_j^{(l)} W^{(l)} + b^{(l)}\right) = \sigma\left(AH^{(l)}W^{(l)} + b^{(l)} \right)$$
 - GCN의 목적: 주변 노드의 정보를 통해 자신의 정보를 hidden representation으로 만들 수 있는 필터(weight)를 찾는 것
 $$f\left(H^{(l)}, A \right) = \sigma\left(AH^{(l)}W^{(l)} \right)$$
 - 가중치(W)의 특징
@@ -280,9 +281,11 @@ $$\alpha_{ij} = softmax(e_{ij}) = \cfrac{e_{ij}}{\mathsf{exp}\left(\sum_{k\in \m
 
 ### (2) Multi-head Attention
 - Average
-$$H^{(l+1)}_i = \sigma\left(\frac{1}{k}\sum^k_{k=1}\sum_{j\in \mathcal{N}(i)}\alpha^{(l)}_{ij}H^{(i)}_jW^{(l)} \right)$$
+
+$$H_i^{(l+1)} = \sigma\left(\frac{1}{k}\sum_{k=1}^k\sum_{j\in \mathcal{N}(i)}\alpha^{(l)}_{ij}H^{(l)}_jW^{(l)} \right)$$
 - Concatenation
-$$H^{(l+1)}_i = \bigcup^k_{k=1}\sigma\left(\sum_{j\in \mathcal{N}(i)}\alpha^{(l)}_{ij}H^{(l)}_jW^{(l)} \right)$$
+
+$$H_i^{(l+1)} = \bigcup_{k=1}^K\sigma\left(\sum_{j\in \mathcal{N}(i)}\alpha^{(l)}_{ij}H^{(l)}_jW^{(l)} \right)$$
 
 ### (3) Attention
 - 각 node 간 벡터를 참고하여 연산을 할 때, 전체를 동일한 비율로 참고하는 것이 아니라, 연관이 있는 node에 좀 더 집중
@@ -299,18 +302,24 @@ $$H^{(l+1)}_i = \bigcup^k_{k=1}\sigma\left(\sum_{j\in \mathcal{N}(i)}\alpha^{(l)
 
 ### (2) 1-hop layer
 - Message aggregation
-$$e^{(l)}_u = LeakyReLU\left(m_{u \leftarrow u} + \sum_{i\in N_u} m_{u \leftarrow i} \right)$$
+
+$$e_u^{(l)} = LeakyReLU\left(m_{u \leftarrow u} + \sum_{i\in N_u} m_{u \leftarrow i} \right)$$
 - Message construction
-$$m_{u\leftarrow i} = \cfrac{1}{\sqrt{|\mathcal{N}_u||\mathcal{N}_i|}}\left(W_1e_i + W_2(e_i \odot  e_u) \right)$$
+
+$$m_{u\leftarrow i} = \cfrac{1}{\sqrt{\left|\mathcal{N_u}\right| \left|\mathcal{N_i}\right|}}\left(W_1e_i + W_2(e_i \odot  e_u) \right)$$
 $$m_{u\leftarrow u} = W_1e_u$$
 - Embedding layer
+
 $$E = \left[e_{u_1}, \cdots, e_{u_N}, e_{i_1}, \cdots, e_{i_M} \right]$$
 
 ### (3) NGCF Architecture
-- Embeddings -> Embedding Propagation Layers (N-hop Layers) -> Prediction Layer $\left(\hat{y}_{NGCF}(u, i) = {e^*_u}^T,\ e^*_i,\quad Loss = \sum_{(u, i, j) \in O} -\ln\sigma\left(\hat{y}_{ui} - \hat{y}_{uj} \right)(\mathsf{BPR\ Loss}) \right)$
+- Embeddings -> Embedding Propagation Layers (N-hop Layers) -> Prediction Layer 
+
+$$\hat{y}_ {NGCF}(u, i) = {e_u^\ast}^T,\ e_i^\ast,\quad Loss = \sum_{(u,i,j) \in O} \ln\sigma\left(\hat{y}_ {ui} - \hat{y}_ {uj} \right)(\mathsf{BPR\ Loss})$$
 
 ## 2) LightGCN
 - NGCF에서 feature transformation과 non-linear activation function을 둘 다 제거하면 성능 향상됨
 - Message propagation
-$$e_u = \sum_{i \in \mathcal{N}_u}\cfrac{1}{\sqrt{N_u}\sqrt{N_i}}e_i,\ e_i = \sum_{i\in\mathcal{N}_u}\cfrac{1}{\sqrt{N_u}\sqrt{N_i}}e_u$$
+
+$$e_u = \sum_{i \in \mathcal{N}_ u}\cfrac{1}{\sqrt{N_u}\sqrt{N_i}}e_i,\ e_i = \sum_ {i\in\mathcal{N}_u}\cfrac{1}{\sqrt{N_u}\sqrt{N_i}}e_u$$
 
